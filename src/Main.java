@@ -14,7 +14,6 @@ public class Main {
             writeResult(minNumber, "min");
         } else {
             System.out.println("You write wrong date");
-
         }
     }
 
