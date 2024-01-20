@@ -1,5 +1,4 @@
-import java.lang.reflect.Array;
-import java.util.Arrays;
+
 import java.util.Scanner;
 
 public class Game {
@@ -11,11 +10,11 @@ public class Game {
         int currentPlayer = 1;
         Scanner scanner = new Scanner(System.in);
 
-        while (!winIsFound&&!gameIsFinish) {
+        while (!winIsFound && !gameIsFinish) {
 
             showRequest(currentPlayer);
             String getAnswer = scanner.nextLine();
-            String[] pairRowColumn = getPairRowColumn(getAnswer, field, currentPlayer);
+            int[] pairRowColumn = getPairRowColumn(getAnswer, field, currentPlayer);
 
             boolean isCorrectEnter = checkCorrectEnter(pairRowColumn, field);
             if (isCorrectEnter) {
@@ -29,7 +28,7 @@ public class Game {
             showField(field);
 
             if (winIsFound) {
-                System.out.println("You are win!");
+                System.out.println("Congratulations! Player " + currentPlayer + " is win!");
             }
             if (gameIsFinish) {
                 System.out.println("Game over!");
@@ -52,10 +51,10 @@ public class Game {
         return true;
     }
 
-    private static boolean checkCorrectEnter(String[] pairRowColumn, char[][] field) {
+    private static boolean checkCorrectEnter(int[] pairRowColumn, char[][] field) {
 
-        int numberRow = Integer.valueOf(pairRowColumn[0]);
-        int numberColumn = Integer.valueOf(pairRowColumn[1]);
+        int numberRow = pairRowColumn[0];
+        int numberColumn = pairRowColumn[1];
 
         if (numberRow >= 1 && numberRow <= 3 && numberColumn >= 1 && numberColumn <= 3) {
             if (field[numberRow - 1][numberColumn - 1] == '-') {
@@ -68,11 +67,13 @@ public class Game {
         return false;
     }
 
-    private static String[] getPairRowColumn(String answer, char[][] field, int currentPlayer) {
+    private static int[] getPairRowColumn(String answer, char[][] field, int currentPlayer) {
+
         String[] pairRowColumn;
         pairRowColumn = answer.split(" ");
+        int[] rowAndColumn = {Integer.parseInt(pairRowColumn[0]), Integer.parseInt(pairRowColumn[1])};
 
-        return pairRowColumn;
+        return rowAndColumn;
     }
 
     private static boolean checkForWin(char[][] fields) {
@@ -138,10 +139,10 @@ public class Game {
         return false;
     }
 
-    private static void pasteToField(String[] pairRowColumn, char[][] field, int numberOfPlayer) {
+    private static void pasteToField(int[] pairRowColumn, char[][] field, int numberOfPlayer) {
 
-        int numberRow = Integer.valueOf(pairRowColumn[0]);
-        int numberColumn = Integer.valueOf(pairRowColumn[1]);
+        int numberRow = pairRowColumn[0];
+        int numberColumn = pairRowColumn[1];
         field[numberRow - 1][numberColumn - 1] = numberOfPlayer == 1 ? 'x' : '0';
 
     }
