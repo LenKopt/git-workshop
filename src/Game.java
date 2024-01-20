@@ -7,21 +7,32 @@ public class Game {
         char[][] field = new char[][]{{'-', '-', '-'}, {'-', '-', '-'}, {'-', '-', '-'}};
         showField(field);
         boolean gameIsFinish = false;
+        boolean winIsFound = false;
         int currentPlayer = 1;
         Scanner scanner = new Scanner(System.in);
 
-        while (!gameIsFinish) {
+        while (!winIsFound&&!gameIsFinish) {
 
             showRequest(currentPlayer);
             String getAnswer = scanner.nextLine();
-            getPairRowColumb(getAnswer, field, currentPlayer);
-            gameIsFinish = checkForWin(field);
+            String[] pairRowColumn = getPairRowColumn(getAnswer, field, currentPlayer);
 
+            boolean isCorrectEnter = checkCorrectEnter(pairRowColumn, field);
+            if (isCorrectEnter) {
+                pasteToField(pairRowColumn, field, currentPlayer);
+            } else {
+                continue;
+            }
+
+            winIsFound = checkForWin(field);
+            gameIsFinish = checkFinishedGame(field);
             showField(field);
 
-            if (gameIsFinish) {
+            if (winIsFound) {
                 System.out.println("You are win!");
-                break;
+            }
+            if (gameIsFinish) {
+                System.out.println("Game over!");
             }
             currentPlayer = currentPlayer == 1 ? 2 : 1;
 
@@ -30,25 +41,53 @@ public class Game {
 
     }
 
-    private static void getPairRowColumb(String answer, char[][] field, int currentPlayer) {
+    private static boolean checkFinishedGame(char[][] fields) {
+        for (int i = 0; i < fields.length; i++) {
+            for (int j = 0; j < fields[i].length; j++) {
+                if (fields[i][j] == '-') {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private static boolean checkCorrectEnter(String[] pairRowColumn, char[][] field) {
+
+        int numberRow = Integer.valueOf(pairRowColumn[0]);
+        int numberColumn = Integer.valueOf(pairRowColumn[1]);
+
+        if (numberRow >= 1 && numberRow <= 3 && numberColumn >= 1 && numberColumn <= 3) {
+            if (field[numberRow - 1][numberColumn - 1] == '-') {
+                return true;
+            } else {
+                System.out.println("This place is not empty!");
+            }
+        }
+        System.out.println("You write wrong number row or column");
+        return false;
+    }
+
+    private static String[] getPairRowColumn(String answer, char[][] field, int currentPlayer) {
         String[] pairRowColumn;
         pairRowColumn = answer.split(" ");
-        pasteToField(Integer.valueOf(pairRowColumn[0]), Integer.valueOf(pairRowColumn[1]), field, currentPlayer);
+
+        return pairRowColumn;
     }
 
     private static boolean checkForWin(char[][] fields) {
         boolean winRow = checkForWinRows(fields);
-        System.out.println(winRow);
+        //System.out.println(winRow);
         if (winRow) {
             return true;
         }
         boolean winColumns = checkForWinColumns(fields);
-        System.out.println(winColumns);
+        //System.out.println(winColumns);
         if (winColumns) {
             return true;
         }
         boolean winDiagonals = checkForWinDiagonals(fields);
-        System.out.println(winDiagonals);
+        //System.out.println(winDiagonals);
         if (winDiagonals) {
             return true;
         }
@@ -58,7 +97,7 @@ public class Game {
 
     private static boolean checkForWinDiagonals(char[][] fields) {
 
-        if (fields[2][2] == '-') {
+        if (fields[1][1] == '-') {
             return false;
         }
 
@@ -81,7 +120,6 @@ public class Game {
             if ((fields[0][i] == fields[1][i]) && (fields[0][i] == fields[2][i])) {
                 return true;
             }
-
         }
         return false;
     }
@@ -96,14 +134,15 @@ public class Game {
             if ((fields[i][0] == fields[i][1]) && (fields[i][0] == fields[i][2])) {
                 return true;
             }
-
         }
         return false;
     }
 
-    private static void pasteToField(Integer row, Integer column, char[][] field, int numberOfPlayer) {
+    private static void pasteToField(String[] pairRowColumn, char[][] field, int numberOfPlayer) {
 
-        field[row - 1][column - 1] = numberOfPlayer == 1 ? 'x' : '0';
+        int numberRow = Integer.valueOf(pairRowColumn[0]);
+        int numberColumn = Integer.valueOf(pairRowColumn[1]);
+        field[numberRow - 1][numberColumn - 1] = numberOfPlayer == 1 ? 'x' : '0';
 
     }
 
