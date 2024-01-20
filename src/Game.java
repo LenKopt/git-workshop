@@ -13,13 +13,19 @@ public class Game {
         while (!winIsFound && !gameIsFinish) {
 
             showRequest(currentPlayer);
-            String getAnswer = scanner.nextLine();
-            int[] pairRowColumn = getPairRowColumn(getAnswer, field, currentPlayer);
+            try {
 
-            boolean isCorrectEnter = checkCorrectEnter(pairRowColumn, field);
-            if (isCorrectEnter) {
-                pasteToField(pairRowColumn, field, currentPlayer);
-            } else {
+                String getAnswer = scanner.nextLine();
+                int[] pairRowColumn = getPairRowColumn(getAnswer);
+                boolean isCorrectEnter = checkCorrectEnter(pairRowColumn, field);
+                if (isCorrectEnter) {
+                    pasteToField(pairRowColumn, field, currentPlayer);
+                } else {
+                    continue;
+                }
+            }
+            catch (NumberFormatException e) {
+                System.out.println("Please, check your data! It isn't number!");
                 continue;
             }
 
@@ -29,6 +35,7 @@ public class Game {
 
             if (winIsFound) {
                 System.out.println("Congratulations! Player " + currentPlayer + " is win!");
+                break;
             }
             if (gameIsFinish) {
                 System.out.println("Game over!");
@@ -67,10 +74,13 @@ public class Game {
         return false;
     }
 
-    private static int[] getPairRowColumn(String answer, char[][] field, int currentPlayer) {
+    private static int[] getPairRowColumn(String answer) {
 
         String[] pairRowColumn;
         pairRowColumn = answer.split(" ");
+        if (pairRowColumn.length!=2) {
+            return new int[]{-1,-1};
+        }
         int[] rowAndColumn = {Integer.parseInt(pairRowColumn[0]), Integer.parseInt(pairRowColumn[1])};
 
         return rowAndColumn;
