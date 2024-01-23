@@ -4,8 +4,7 @@ import java.util.Map;
 import java.util.Scanner;
 //1. разобраться с сообщением в начале
 //2. обработка ввода чисел при вводе размерности
-
-//5. добавить сохранение результатов
+//3. testing
 
 public class CrossesAndZero {
     public static void main(String[] args) {
