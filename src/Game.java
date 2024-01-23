@@ -1,4 +1,5 @@
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Game {
@@ -8,6 +9,7 @@ public class Game {
         boolean gameIsFinish = false;
         boolean winIsFound = false;
         int currentPlayer = 1;
+        //canner scanner = new Scanner(System.in);
         Scanner scanner = new Scanner(System.in);
 
         while (!winIsFound && !gameIsFinish) {
@@ -16,6 +18,10 @@ public class Game {
             try {
 
                 String getAnswer = scanner.nextLine();
+                //int[] pairRowColumn = new int[2];
+
+                //pairRowColumn[0] = scanner.nextInt();
+                //pairRowColumn[1] = scanner.nextInt();
                 int[] pairRowColumn = getPairRowColumn(getAnswer);
                 boolean isCorrectEnter = checkCorrectEnter(pairRowColumn, field);
                 if (isCorrectEnter) {
@@ -23,11 +29,17 @@ public class Game {
                 } else {
                     continue;
                 }
-            }
-            catch (NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 System.out.println("Please, check your data! It isn't number!");
                 continue;
+
             }
+            //catch (InputMismatchException e) {
+//                while(scanner.hasNext())
+//                    scanner.next();
+//scanner.reset();
+//                continue;
+//            }
 
             winIsFound = checkForWin(field);
             gameIsFinish = checkFinishedGame(field);
@@ -43,7 +55,7 @@ public class Game {
             currentPlayer = currentPlayer == 1 ? 2 : 1;
 
         }
-        scanner.close();
+
 
     }
 
@@ -78,8 +90,8 @@ public class Game {
 
         String[] pairRowColumn;
         pairRowColumn = answer.split(" ");
-        if (pairRowColumn.length!=2) {
-            return new int[]{-1,-1};
+        if (pairRowColumn.length != 2) {
+            return new int[]{-1, -1};
         }
         int[] rowAndColumn = {Integer.parseInt(pairRowColumn[0]), Integer.parseInt(pairRowColumn[1])};
 
