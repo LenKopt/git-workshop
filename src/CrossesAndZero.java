@@ -1,5 +1,4 @@
 import java.util.*;
-//1. разобраться с сообщением в начале
 
 public class CrossesAndZero {
     public static void main(String[] args) {
