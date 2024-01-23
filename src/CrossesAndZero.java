@@ -1,11 +1,5 @@
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 //1. разобраться с сообщением в начале
-//2. обработка ввода чисел при вводе размерности
-
-//5. добавить сохранение результатов
 
 public class CrossesAndZero {
     public static void main(String[] args) {
@@ -16,15 +10,20 @@ public class CrossesAndZero {
         tableOfWins.put(firstNameOfPlayer, 0);
         tableOfWins.put(secondNameOfPlayer, 0);
 
-        System.out.println("Give size the game:");
+        System.out.println("Give size the game (3-99):");
         Scanner scanner = new Scanner(System.in);
         int sizeField;
 
         while (true) {
-            sizeField = scanner.nextInt();
-            if (!(sizeField < 100 && sizeField > 2 && sizeField == (int) sizeField))
-                System.out.println("Wrong number!!! Write number more 0 and less 100! Repeat enter:");
-            else break;
+            try {
+                sizeField = scanner.nextInt();
+                if (!(sizeField < 100 && sizeField > 2))
+                    System.out.println("Wrong number!!! Write int number more 0 and less 100! Repeat enter:");
+                else break;
+            } catch (InputMismatchException e) {
+                System.out.println("It isn't int number from 3 to 99!");
+                return;
+            }
         }
 
         field = createNewField(sizeField);
@@ -36,6 +35,7 @@ public class CrossesAndZero {
         boolean winIsFound = false;
         int currentPlayer = 1;
         char currentSign = 'x';
+        scanner.nextLine();
 
         while (!winIsFound && !gameIsFinish) {
 
@@ -98,12 +98,12 @@ public class CrossesAndZero {
 
     private static void showTableOfWins(Map<String, Integer> tableOfWins) {
 
-        System.out.println("***************************");
+        System.out.println("*****************************");
         for (Map.Entry<String, Integer> entry : tableOfWins.entrySet()) {
             String key = entry.getKey();
             Integer value = entry.getValue();
             System.out.println("* " + addSpace(key.trim(), 20) + "* " + addSpace(value.toString().trim(), 3) + "*");
-            System.out.println("***************************");
+            System.out.println("*****************************");
         }
 
     }
@@ -120,7 +120,7 @@ public class CrossesAndZero {
 
     private static void congratulatePlayer(Map tableOfWins, String name) {
 
-        System.out.println("Congratulations! Player " + name + " is win!");
+        System.out.println("Congratulations! Player " + name.toUpperCase() + " is win!");
         int currentCountOfWins = (int) tableOfWins.get(name);
         currentCountOfWins++;
         tableOfWins.put(name, currentCountOfWins);
@@ -130,7 +130,9 @@ public class CrossesAndZero {
     private static String enterName(String numberOfPlayer) {
         System.out.println("Please, enter the name of " + numberOfPlayer + " player:");
         Scanner scanner = new Scanner(System.in);
-        return scanner.nextLine();
+        String name = scanner.nextLine();
+        //scanner.close();
+        return name;
     }
 
     private static boolean askAboutСontinuation() {
@@ -253,7 +255,9 @@ public class CrossesAndZero {
                 columnToString = columnToString + fields[j][i];
             }
 
-            return isNotCharacterInString(columnToString, "-") && isNotCharacterInString(columnToString, opositeSign);
+            if (isNotCharacterInString(columnToString, "-") && isNotCharacterInString(columnToString, opositeSign)) {
+                return true;
+            }
         }
 
         return false;
@@ -264,9 +268,11 @@ public class CrossesAndZero {
         for (int i = 0; i < fields.length; i++) {
 
             String currentRow = Arrays.toString(fields[i]);
-            return isNotCharacterInString(currentRow, "-") && isNotCharacterInString(currentRow, opositeSign);
-
+            if (isNotCharacterInString(currentRow, "-") && isNotCharacterInString(currentRow, opositeSign)) {
+                return true;
+            }
         }
+
         return false;
     }
 
