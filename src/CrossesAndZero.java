@@ -105,12 +105,12 @@ public class CrossesAndZero {
 
     private static void showTableOfWins(Map<String, Integer> tableOfWins) {
 
-        System.out.println("*****************************");
+        System.out.println("******************************");
         for (Map.Entry<String, Integer> entry : tableOfWins.entrySet()) {
             String key = entry.getKey();
             Integer value = entry.getValue();
             System.out.println("* " + addSpace(key.trim(), 20) + "* " + addSpace(value.toString().trim(), 3) + "*");
-            System.out.println("*****************************");
+            System.out.println("******************************");
         }
 
     }
