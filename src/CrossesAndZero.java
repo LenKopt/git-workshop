@@ -39,18 +39,21 @@ public class CrossesAndZero {
         while (!winIsFound && !gameIsFinish) {
 
             showRequest(currentPlayer == 1 ? firstNameOfPlayer : secondNameOfPlayer);
+
             try {
-                String getAnswer = scanner.nextLine();
-                int[] pairRowColumn = getPairRowColumn(getAnswer);
+                int row = scanner.nextInt();
+                int column = scanner.nextInt();
+                int[] pairRowColumn = {row, column};
+
                 boolean isCorrectEnter = checkCorrectEnter(pairRowColumn, field);
                 if (isCorrectEnter) {
                     pasteToField(pairRowColumn, field, currentPlayer);
                 } else {
                     continue;
                 }
-
-            } catch (NumberFormatException e) {
+            } catch (InputMismatchException e) {
                 System.out.println("Please, check your data! It isn't number!");
+                scanner.nextLine();
                 continue;
             }
 
@@ -85,6 +88,11 @@ public class CrossesAndZero {
                 boolean continuation = askAboutСontinuation();
                 if (continuation) {
                     gameIsFinish = false;
+                    field = createNewField(sizeField);
+                    fillField(field);
+
+                    showField(field);
+                    continue;
                 }
             }
             currentPlayer = currentPlayer == 1 ? 2 : 1;
@@ -188,18 +196,6 @@ public class CrossesAndZero {
         }
         System.out.println("You write wrong number row or column");
         return false;
-    }
-
-    private static int[] getPairRowColumn(String answer) {
-
-        String[] pairRowColumn;
-        pairRowColumn = answer.split(" ");
-        if (pairRowColumn.length != 2) {
-            return new int[]{-1, -1};
-        }
-        int[] rowAndColumn = {Integer.parseInt(pairRowColumn[0]), Integer.parseInt(pairRowColumn[1])};
-
-        return rowAndColumn;
     }
 
     private static boolean checkForWin(char[][] fields, char currentSign) {
