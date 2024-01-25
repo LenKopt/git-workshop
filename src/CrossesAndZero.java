@@ -138,7 +138,7 @@ public class CrossesAndZero {
         System.out.println("Please, enter the name of " + numberOfPlayer + " player:");
         Scanner scanner = new Scanner(System.in);
         String name = scanner.nextLine();
-        //scanner.close();
+
         return name;
     }
 
