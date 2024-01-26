@@ -39,18 +39,21 @@ public class CrossesAndZero {
         while (!winIsFound && !gameIsFinish) {
 
             showRequest(currentPlayer == 1 ? firstNameOfPlayer : secondNameOfPlayer);
+
             try {
-                String getAnswer = scanner.nextLine();
-                int[] pairRowColumn = getPairRowColumn(getAnswer);
+                int row = scanner.nextInt();
+                int column = scanner.nextInt();
+                int[] pairRowColumn = {row, column};
+
                 boolean isCorrectEnter = checkCorrectEnter(pairRowColumn, field);
                 if (isCorrectEnter) {
                     pasteToField(pairRowColumn, field, currentPlayer);
                 } else {
                     continue;
                 }
-
-            } catch (NumberFormatException e) {
+            } catch (InputMismatchException e) {
                 System.out.println("Please, check your data! It isn't number!");
+                scanner.nextLine();
                 continue;
             }
 
@@ -70,7 +73,6 @@ public class CrossesAndZero {
                     winIsFound = false;
                     field = createNewField(sizeField);
                     fillField(field);
-
                     showField(field);
                     continue;
                 } else {
@@ -85,6 +87,10 @@ public class CrossesAndZero {
                 boolean continuation = askAboutСontinuation();
                 if (continuation) {
                     gameIsFinish = false;
+                    field = createNewField(sizeField);
+                    fillField(field);
+                    showField(field);
+                    continue;
                 }
             }
             currentPlayer = currentPlayer == 1 ? 2 : 1;
@@ -97,12 +103,12 @@ public class CrossesAndZero {
 
     private static void showTableOfWins(Map<String, Integer> tableOfWins) {
 
-        System.out.println("*****************************");
+        System.out.println("******************************");
         for (Map.Entry<String, Integer> entry : tableOfWins.entrySet()) {
             String key = entry.getKey();
             Integer value = entry.getValue();
             System.out.println("* " + addSpace(key.trim(), 20) + "* " + addSpace(value.toString().trim(), 3) + "*");
-            System.out.println("*****************************");
+            System.out.println("******************************");
         }
 
     }
@@ -130,7 +136,7 @@ public class CrossesAndZero {
         System.out.println("Please, enter the name of " + numberOfPlayer + " player:");
         Scanner scanner = new Scanner(System.in);
         String name = scanner.nextLine();
-        //scanner.close();
+
         return name;
     }
 
@@ -188,18 +194,6 @@ public class CrossesAndZero {
         }
         System.out.println("You write wrong number row or column");
         return false;
-    }
-
-    private static int[] getPairRowColumn(String answer) {
-
-        String[] pairRowColumn;
-        pairRowColumn = answer.split(" ");
-        if (pairRowColumn.length != 2) {
-            return new int[]{-1, -1};
-        }
-        int[] rowAndColumn = {Integer.parseInt(pairRowColumn[0]), Integer.parseInt(pairRowColumn[1])};
-
-        return rowAndColumn;
     }
 
     private static boolean checkForWin(char[][] fields, char currentSign) {
