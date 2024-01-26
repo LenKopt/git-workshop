@@ -73,7 +73,6 @@ public class CrossesAndZero {
                     winIsFound = false;
                     field = createNewField(sizeField);
                     fillField(field);
-
                     showField(field);
                     continue;
                 } else {
@@ -90,7 +89,6 @@ public class CrossesAndZero {
                     gameIsFinish = false;
                     field = createNewField(sizeField);
                     fillField(field);
-
                     showField(field);
                     continue;
                 }
