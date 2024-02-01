@@ -1,5 +1,6 @@
 package pl.akademiaspecjalistow.oop.library;
 
+import java.time.Year;
 import java.util.*;
 
 public class Main {
@@ -16,29 +17,33 @@ public class Main {
         myLibrary.addToLibrary("Ogniem i mieczem", myLibrary.findAuthor("Sienkiewicz Henryk"), 2000);
         myLibrary.addToLibrary("Rusłan i Ludmiła", myLibrary.findAuthor("Puszkin Aleksandr"), 1920);
 
-        int result = showMenu(scanner);
+        int result = showMainMenu(scanner);
 
-        while (result != 8) {
+        List<Integer> listPossibleOptions = List.of(1, 2, 3, 4, 5, 6, 7);
+
+        while (listPossibleOptions.contains(result)) {
 
             switch (result) {
                 case 1 -> {
                     myLibrary.showListOfBooks();
                 }
                 case 2 -> {
-                    int searchСriterion = getSearchCriterion();
-                    showBooks(searchСriterion, myLibrary, scanner);
+                    int searchСriterion = getSelectionSearchMenu();
+                    if (searchСriterion != 0) {
+                        processSelection(searchСriterion, myLibrary, scanner);
+                    }
                 }
                 case 3 -> {
                     System.out.println("Please, enter title of book, its author and year of new book:");
-                    myLibrary.addToLibrary(getInformationFromConsol("Enter title of book", scanner),
-                            myLibrary.findAuthor(getInformationFromConsol("Enter the author", scanner)),
-                            Integer.parseInt(getInformationFromConsol("Enter the year", scanner)));
+                    myLibrary.addToLibrary(getStringFromConsole("Enter title of book", scanner),
+                            myLibrary.findAuthor(getStringFromConsole("Enter the author", scanner)),
+                            getIntFromConsole("Enter the year", scanner));
                 }
                 case 4 -> {
                     System.out.println("Please, enter title of book, its author and year of book, that will be deleted:");
-                    boolean wasDeleted = myLibrary.removeBook(getInformationFromConsol("Enter title of book", scanner),
-                            myLibrary.findAuthor(getInformationFromConsol("Enter author", scanner)),
-                            Integer.parseInt(getInformationFromConsol("Enter year", scanner)));
+                    boolean wasDeleted = myLibrary.removeBook(getStringFromConsole("Enter title of book", scanner),
+                            myLibrary.findAuthor(getStringFromConsole("Enter author", scanner)),
+                            getIntFromConsole("Enter year", scanner));
                     if (wasDeleted) {
                         System.out.println("THE BOOK WAS DELETED SUCCESSFULLY!");
                     } else {
@@ -46,11 +51,11 @@ public class Main {
                     }
                 }
                 case 5 -> {
-                    boolean resultBorrowing = myLibrary.borrowBook(myLibrary.getReader(getInformationFromConsol("Enter the first name of reader", scanner),
-                                    getInformationFromConsol("Enter the second name of reader", scanner)),
-                            getInformationFromConsol("Enter title of book", scanner),
-                            myLibrary.findAuthor(getInformationFromConsol("Enter author", scanner)),
-                            Integer.parseInt(getInformationFromConsol("Enter year", scanner)));
+                    boolean resultBorrowing = myLibrary.borrowBook(myLibrary.getReader(getStringFromConsole("Enter the first name of reader", scanner),
+                                    getStringFromConsole("Enter the second name of reader", scanner)),
+                            getStringFromConsole("Enter title of book", scanner),
+                            myLibrary.findAuthor(getStringFromConsole("Enter author", scanner)),
+                            getIntFromConsole("Enter year", scanner));
                     if (resultBorrowing) {
                         System.out.println("THE BOOK WAS BORROWED SUCCESSFULLY!");
                     } else {
@@ -58,11 +63,11 @@ public class Main {
                     }
                 }
                 case 6 -> {
-                    boolean wasReturn = myLibrary.returnBook(myLibrary.getReader(getInformationFromConsol("Enter the first name of reader", scanner),
-                                    getInformationFromConsol("Enter the second name of reader", scanner)),
-                            getInformationFromConsol("Enter title of book", scanner),
-                            myLibrary.findAuthor(getInformationFromConsol("Enter the author", scanner)),
-                            Integer.parseInt(getInformationFromConsol("Enter the year", scanner)));
+                    boolean wasReturn = myLibrary.returnBook(myLibrary.getReader(getStringFromConsole("Enter the first name of reader", scanner),
+                                    getStringFromConsole("Enter the second name of reader", scanner)),
+                            getStringFromConsole("Enter title of book", scanner),
+                            myLibrary.findAuthor(getStringFromConsole("Enter the author", scanner)),
+                            getIntFromConsole("Enter the year", scanner));
                     if (wasReturn) {
                         System.out.println("THE BOOK WAS RETURNED SUCCESSFULLY!");
                     } else {
@@ -72,71 +77,110 @@ public class Main {
                 case 7 -> Utils.printListOfReaders(myLibrary.getListReaders());
                 case 8 -> System.exit(0);
             }
-            result = showMenu(scanner);
+            result = showMainMenu(scanner);
         }
         scanner.close();
     }
 
-    private static void showBooks(int searchСriterion, Library library, Scanner scanner) {
+    private static void processSelection(int searchСriterion, Library library, Scanner scanner) {
         List<Book> listFoundBooks = new ArrayList<>();
         switch (searchСriterion) {
             case 1 -> {
-                String informationFromUser = getInformationFromConsol("Enter the author name", scanner);
-                listFoundBooks.addAll(library.findBookByAuthor(library.findAuthor(informationFromUser)));
+                String authorName = getStringFromConsole("Enter the author name", scanner);
+                listFoundBooks.addAll(library.findBookByAuthor(authorName));
             }
             case 2 -> {
-                listFoundBooks.addAll(library.findBookByTitle(getInformationFromConsol("Enter the title of book", scanner)));
+                listFoundBooks.addAll(library.findBookByTitle(getStringFromConsole("Enter the title of book", scanner)));
             }
             case 3 -> {
-                listFoundBooks.addAll(library.findBookByYear(Integer.parseInt(getInformationFromConsol("Enter the year", scanner))));
+                listFoundBooks.addAll(library.findBookByYear(getIntFromConsole("Enter the year", scanner)));
             }
             case 4 -> {
-                String informationFromUser = getInformationFromConsol("Enter the status - y/n", scanner);
+                String informationFromUser = getStringFromConsole("Enter the status - y/n", scanner);
                 listFoundBooks.addAll(library.findBookByStatus(informationFromUser.toUpperCase().trim()));
             }
         }
         Utils.showToConsole(listFoundBooks);
     }
 
-    private static int getSearchCriterion() {
+    private static int getSelectionSearchMenu() {
         System.out.println("\nTo indicate only the author enter 1:\n" +
                 "To indicate only title enter 2:\n" +
                 "To indicate only year enter 3:\n" +
                 "To indicate free books enter 4:");
         Scanner scanner = new Scanner(System.in);
-        return scanner.nextInt();
+        List<Integer> listPossibleOptions = List.of(1, 2, 3, 4);
+        try {
+            int result = scanner.nextInt();
+            if (listPossibleOptions.contains(result)) {
+                return result;
+            }
+        } catch (InputMismatchException e) {
+            System.out.println("It is not int number!");
+        }
+        System.out.println("You can write int number from 1 to 4!");
+        return 0;
     }
 
-
-    private static String getInformationFromConsol(String textForUser, Scanner scanner) {
+    private static String getStringFromConsole(String textForUser, Scanner scanner) {
         System.out.println(textForUser);
+        if (textForUser.contains("status")) {
+            List<String> listYesNo = List.of("Y", "N", "YES", "NO");
+            while (scanner.hasNextLine()) {
+                String currentValue = scanner.nextLine().toUpperCase();
+                if (listYesNo.contains(currentValue)) {
+                    return currentValue.substring(0, 1).toUpperCase();
+                }
+                System.out.println("WRITE Y/N");
+            }
+        }
         if (scanner.hasNextLine()) {
             return scanner.nextLine().toUpperCase();
         }
         return "";
     }
 
-    private static int showMenu(Scanner scanner) {
-        int input = 0;
-        do {
-            System.out.println("\nShow book collections - enter 1:\n" +
-                    "Search for book - enter 2:\n" +
-                    "Add a book - enter 3:\n" +
-                    "Remove a book - enter 4:\n" +
-                    "Borrow a book - enter 5:\n" +
-                    "Return a book - enter 6:\n" +
-                    "Print list of readers - enter 7:\n" +
-                    "Exit - enter 8:\n");
+    private static Integer getIntFromConsole(String textForUser, Scanner scanner) {
+        System.out.println(textForUser);
+        while (scanner.hasNextLine()) {
             try {
-                input = scanner.nextInt();
-                scanner.nextLine();
+                if (textForUser.contains("year")) {
+                    Integer currentValue = scanner.nextInt();
+                    if (currentValue > 0 && currentValue <= Year.now().getValue()) {
+                        return currentValue;
+                    }
+                    System.out.println("Year can be more than 0 and less or equal this year");
+                } else {
+                    if (scanner.hasNextLine()) {
+                        return scanner.nextInt();
+                    }
+                }
             } catch (InputMismatchException e) {
-                //scanner.nextLine();
-            } catch (NoSuchElementException e) {
-                //scanner.nextLine();
+                scanner.nextLine();
+                System.out.println("WRITE YEAR, FOR EXAMPLE 2000, 1990;");
             }
-        } while (input != 1 && input != 2 && input != 3 && input != 4 && input != 5 && input != 6 && input != 7 && input != 8);
+        }
+        return 0;
+    }
 
+    private static int showMainMenu(Scanner scanner) {
+        int input = 0;
+        System.out.println("\nShow book collections - enter 1:\n" +
+                "Search for book - enter 2:\n" +
+                "Add a book - enter 3:\n" +
+                "Remove a book - enter 4:\n" +
+                "Borrow a book - enter 5:\n" +
+                "Return a book - enter 6:\n" +
+                "Print list of readers - enter 7:\n" +
+                "Exit - enter *:\n");
+        try {
+            input = scanner.nextInt();
+            scanner.nextLine();
+        } catch (InputMismatchException e) {
+
+        } catch (NoSuchElementException e) {
+
+        }
         return input;
     }
 }

@@ -38,10 +38,10 @@ public class Library {
         return null;
     }
 
-    List<Book> findBookByAuthor(Author author) {
+    List<Book> findBookByAuthor(String authorName) {
         List<Book> listSearchBooks = new ArrayList<>();
         for (Book nextBook : listOfBooks) {
-            if (nextBook.getAuthor().equals(author)) {
+            if (nextBook.getAuthor().getNameAuthor().contains(authorName)) {
                 listSearchBooks.add(nextBook);
             }
         }
@@ -51,7 +51,7 @@ public class Library {
     List<Book> findBookByTitle(String title) {
         List<Book> listSearchBooks = new ArrayList<>();
         for (Book nextBook : listOfBooks) {
-            if (nextBook.getTitle().equals(title)) {
+            if (nextBook.getTitle().contains(title)) {
                 listSearchBooks.add(nextBook);
             }
         }
@@ -102,7 +102,6 @@ public class Library {
     }
 
     public boolean returnBook(Reader reader, String title, Author author, Integer year) {
-
         List<Book> listBookOfReader = listReaders.get(reader);
         if (listBookOfReader == null) {
             return false;
@@ -120,7 +119,6 @@ public class Library {
     }
 
     public Reader returnReader(String firstName, String lastName) {
-
         for (Map.Entry<Reader, List<Book>> pair : listReaders.entrySet()) {
             Reader reader = pair.getKey();
             if (reader.getFirstName().equalsIgnoreCase(firstName) && reader.getLastName().equalsIgnoreCase(lastName)) {
@@ -150,8 +148,8 @@ public class Library {
         setAuthors.add(newAuthor);
         return newAuthor;
     }
-    Reader getReader(String firstName, String lastName) {
 
+    Reader getReader(String firstName, String lastName) {
         Reader reader = returnReader(firstName, lastName);
         if (reader == null) {
             return new Reader(firstName, lastName);
