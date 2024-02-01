@@ -5,8 +5,8 @@ public class Reader {
     private String lastName;
 
     public Reader(String firstName, String lastName) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.firstName = firstName.toUpperCase().trim();
+        this.lastName = lastName.toUpperCase().trim();
     }
 
     @Override

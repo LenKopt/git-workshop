@@ -1,28 +1,35 @@
 package pl.akademiaspecjalistow.oop.library;
 
+import java.util.UUID;
+
 public class Book {
     private String title;
-    private String author;
+    private Author author;
     private Integer year;
-    private Integer countOfInstance;
-    private Integer remainder;
+    private Boolean status;
+    private String id;
 
-    public Book(String title, String author, Integer year) {
-        this.title = title;
+    public Book(String title, Author author, Integer year) {
+        this.title = title.toUpperCase().trim();
         this.author = author;
         this.year = year;
-        this.countOfInstance = 0;
-        this.remainder = 0;
+        this.status = true;
+        this.id = UUID.randomUUID().toString();
     }
 
-    public Book() {
+    public String getId() {
+        return id;
+    }
+
+    public void changeStatus() {
+        this.status = !status;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public String getAuthor() {
+    public Author getAuthor() {
         return author;
     }
 
@@ -30,32 +37,12 @@ public class Book {
         return year;
     }
 
-    public void increaseCountOfInstance() {
-        this.countOfInstance++;
-    }
-
-    public void increaseRemainder() {
-        this.remainder++;
-    }
-
-    public Integer getCountOfInstance() {
-        return countOfInstance;
-    }
-
-    public Integer getRemainder() {
-        return remainder;
-    }
-
-    public void decreaseRemainder() {
-        this.remainder--;
-    }
-
     @Override
     public String toString() {
-        return "Book: " + title + " of " + author + ", " + year;
+        return "Book: " + title + " of " + author.getNameAuthor() + ", " + year + "; ";
     }
 
-    public void decreaseCount() {
-        this.countOfInstance--;
+    public String getStatus() {
+        return status == true ? "Y" : "N";
     }
 }
