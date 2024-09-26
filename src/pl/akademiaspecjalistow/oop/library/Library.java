@@ -1,159 +1,159 @@
 package pl.akademiaspecjalistow.oop.library;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Library {
     private List<Book> listOfBooks;
     private Map<Reader, List<Book>> listReaders;
+    private Set<Author> setAuthors;
 
     public Library() {
         this.listOfBooks = new ArrayList<>();
         this.listReaders = new HashMap();
+        this.setAuthors = new HashSet<>();
     }
 
-    public static Book createNewBook(String title, String author, Integer year) {
+    public Map<Reader, List<Book>> getListReaders() {
+        return listReaders;
+    }
+
+    public static Book createNewBook(String title, Author author, Integer year) {
         return new Book(title, author, year);
     }
 
-    public void addToLibrary(String title, String author, Integer year) {
-        Book currentBook = findBook(title, author, year);
-        if (currentBook == null) {
-            currentBook = createNewBook(title, author, year);
-            listOfBooks.add(currentBook);
-        }
-        currentBook.increaseCountOfInstance();
-        currentBook.increaseRemainder();
+    public void addToLibrary(String title, Author author, Integer year) {
+        Book currentBook = createNewBook(title, author, year);
+        listOfBooks.add(currentBook);
     }
 
-    private Book findBook(String title, String author, Integer year) {
+    private Book findBook(String title, Author author, Integer year, String status) {
         for (Book nextBook : listOfBooks) {
-            if (nextBook.getTitle().equals(title) && nextBook.getAuthor().equals(author) && nextBook.getYear().equals(year)) {
+            if (nextBook.getTitle().equals(title) &&
+                    nextBook.getAuthor().equals(author) &&
+                    nextBook.getYear().equals(year) &&
+                    nextBook.getStatus().equals(status)) {
                 return nextBook;
             }
         }
         return null;
     }
 
-
-    public void findBook(String stringParametr, Boolean isAuthor, Integer intParametr) {
+    List<Book> findBookByAuthor(String authorName) {
         List<Book> listSearchBooks = new ArrayList<>();
         for (Book nextBook : listOfBooks) {
-            if (stringParametr.equals("")) {
-                if (nextBook.getYear().equals(intParametr)) {
-                    listSearchBooks.add(nextBook);
-                } else if (nextBook.getRemainder().compareTo(intParametr) == 0 || nextBook.getRemainder().compareTo(intParametr) == 1) {
-                    listSearchBooks.add(nextBook);
-                }
-            } else if (isAuthor) {
-                if (nextBook.getAuthor().toLowerCase().contains(stringParametr.toLowerCase())) {
-                    listSearchBooks.add(nextBook);
-                }
-            } else {
-                if (nextBook.getTitle().toLowerCase().contains(stringParametr.toLowerCase())) {
-                    listSearchBooks.add(nextBook);
-                }
+            if (nextBook.getAuthor().getNameAuthor().contains(authorName)) {
+                listSearchBooks.add(nextBook);
             }
         }
-        showToConsole(listSearchBooks);
+        return listSearchBooks;
     }
 
+    List<Book> findBookByTitle(String title) {
+        List<Book> listSearchBooks = new ArrayList<>();
+        for (Book nextBook : listOfBooks) {
+            if (nextBook.getTitle().contains(title)) {
+                listSearchBooks.add(nextBook);
+            }
+        }
+        return listSearchBooks;
+    }
 
-    public void borrowBook(Reader reader, String title, String author, Integer year) {
-        Book foundBook = findBook(title, author, year);
+    List<Book> findBookByYear(Integer year) {
+        List<Book> listSearchBooks = new ArrayList<>();
+        for (Book nextBook : listOfBooks) {
+            if (nextBook.getYear().equals(year)) {
+                listSearchBooks.add(nextBook);
+            }
+        }
+        return listSearchBooks;
+    }
+
+    List<Book> findBookByStatus(String status) {
+        List<Book> listSearchBooks = new ArrayList<>();
+        for (Book nextBook : listOfBooks) {
+            if (nextBook.getStatus().equals(status)) {
+                listSearchBooks.add(nextBook);
+            }
+        }
+        return listSearchBooks;
+    }
+
+    public boolean borrowBook(Reader reader, String title, Author author, Integer year) {
+        Book foundBook = findBook(title, author, year, "Y");
         if (foundBook == null) {
-            System.out.println("Sorry! This book isn't in our library!");
-        } else if (foundBook.getRemainder() == 0) {
-            System.out.println("Sorry! This book already borrowed!");
-        } else {
-            List<Book> listBookOfReader = listReaders.get(reader);
-            if (listBookOfReader == null) {
-                listBookOfReader = new ArrayList<>();
-                listBookOfReader.add(foundBook);
-                listReaders.put(reader, listBookOfReader);
-            } else {
-                listBookOfReader.add(foundBook);
-            }
-            foundBook.decreaseRemainder();
+            return false;
+        } else if (foundBook.getStatus().equals("N")) {
+            return false;
         }
+        foundBook.changeStatus();
+        writeBookForReader(reader, foundBook);
+        return true;
     }
 
-    public void returnBook(Reader reader, String title, String author, Integer year) {
-
+    private void writeBookForReader(Reader reader, Book book) {
         List<Book> listBookOfReader = listReaders.get(reader);
         if (listBookOfReader == null) {
-            System.out.println("Error! Check entered data!");
+            listBookOfReader = new ArrayList<>();
+            listBookOfReader.add(book);
+            listReaders.put(reader, listBookOfReader);
         } else {
-            Book currentBook = findBook(title, author, year);
-            listBookOfReader.remove(currentBook);
-            currentBook.increaseRemainder();
+            listBookOfReader.add(book);
         }
+    }
+
+    public boolean returnBook(Reader reader, String title, Author author, Integer year) {
+        List<Book> listBookOfReader = listReaders.get(reader);
+        if (listBookOfReader == null) {
+            return false;
+        }
+        Book currentBook = findBook(title, author, year, "N");
+        if (listBookOfReader.remove(currentBook)) {
+            currentBook.changeStatus();
+            return true;
+        }
+        return false;
     }
 
     public void showListOfBooks() {
-        showToConsole(listOfBooks);
-    }
-
-    private void showToConsole(List<Book> listToShow) {
-        System.out.println("LIST OF BOOKS\n");
-        System.out.println("-------------------------------------------------------------------------------------------");
-        System.out.println("|            Author            |             Title            |  Year  | Count | Reminder |");
-        System.out.println("-------------------------------------------------------------------------------------------");
-        for (Book nextBook : listToShow) {
-            System.out.println("|" + addSpace(nextBook.getAuthor().trim(), 30) + "|" + addSpace(nextBook.getTitle().trim(), 30)
-                    + "|  " + nextBook.getYear() + "  |   "
-                    + nextBook.getCountOfInstance() + "   |     " + nextBook.getRemainder() + "    |");
-        }
-        System.out.println("-------------------------------------------------------------------------------------------");
-    }
-
-    private static String addSpace(String word, int lenghtString) {
-        String retundWork = word;
-        for (int i = 0; i < lenghtString - word.length(); i++) {
-            retundWork = retundWork + " ";
-        }
-        return retundWork;
-    }
-
-    public void printListOfReaders() {
-        System.out.println("LIST BORROWED BOOKS\n");
-
-        for (Map.Entry<Reader, List<Book>> pair : listReaders.entrySet()) {
-            Reader reader = pair.getKey();
-            List<Book> listRedersBooks = pair.getValue();
-            String readersBooks = listRedersBooks.toString();
-            System.out.println(reader + " : " + readersBooks);
-        }
+        Utils.showToConsole(listOfBooks);
     }
 
     public Reader returnReader(String firstName, String lastName) {
-
         for (Map.Entry<Reader, List<Book>> pair : listReaders.entrySet()) {
             Reader reader = pair.getKey();
-            if (reader.getFirstName().trim().toLowerCase().equals(firstName) && reader.getLastName().trim().toLowerCase().equals(lastName)) {
+            if (reader.getFirstName().equalsIgnoreCase(firstName) && reader.getLastName().equalsIgnoreCase(lastName)) {
                 return reader;
             }
         }
         return null;
     }
 
-    public void removeBook(String title, String author, Integer year) {
-        Book foundBook = findBook(title, author, year);
-        Integer reminderThisBook = foundBook.getRemainder();
-        Integer countThisBook = foundBook.getCountOfInstance();
-
+    public boolean removeBook(String title, Author author, Integer year) {
+        Book foundBook = findBook(title.toUpperCase().trim(), author, year, "Y");
         if (foundBook == null) {
-            System.out.println("This book isn't in our library");
-        } else if (reminderThisBook == 1 && countThisBook == 1) {
-            System.out.println("Book " + foundBook.getTitle() + " will be delete!");
-            listOfBooks.remove(foundBook);
-        } else if (reminderThisBook >= 1) {
-            foundBook.decreaseRemainder();
-            foundBook.decreaseCount();
+            return false;
         } else {
-            System.out.println("This book can be deleted!");
+            listOfBooks.remove(foundBook);
+            return true;
         }
+    }
+
+    Author findAuthor(String nameAuthor) {
+        for (Author nextAuthor : setAuthors) {
+            if (nextAuthor.getNameAuthor().equals(nameAuthor.toUpperCase().trim())) {
+                return nextAuthor;
+            }
+        }
+        Author newAuthor = new Author(nameAuthor);
+        setAuthors.add(newAuthor);
+        return newAuthor;
+    }
+
+    Reader getReader(String firstName, String lastName) {
+        Reader reader = returnReader(firstName, lastName);
+        if (reader == null) {
+            return new Reader(firstName, lastName);
+        }
+        return reader;
     }
 }
